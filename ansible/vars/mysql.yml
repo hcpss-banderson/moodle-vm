@@ -1,0 +1,11 @@
+---
+mysql_databases:
+  - name:       "{{ moodle_db_name }}"
+    encoding:   "utf8"
+    collation:  "utf8_general_ci"
+mysql_users:
+  - name:       "{{ moodle_db_username }}"
+    host:       "%"
+    password:   "{{ moodle_db_password }}"
+    priv:       "{{ moodle_db_name }}.*:ALL"
+mysql_root_password: root

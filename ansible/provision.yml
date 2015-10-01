@@ -1,0 +1,24 @@
+---
+- name: Moodle
+  hosts: all
+  sudo: yes
+  
+  vars_files:
+    - vars/apache.yml
+    - vars/php.yml
+    - vars/mysql.yml
+  
+  roles:
+    - geerlingguy.apache
+    - geerlingguy.php
+    - geerlingguy.mysql
+    - moodle
+    
+  tasks:
+    - name: Make Moodle accessible over the web
+      file:
+        src:    "{{ moodle_location }}"
+        dest:   "/var/www/moodle"
+        state:  link
+  
+  
