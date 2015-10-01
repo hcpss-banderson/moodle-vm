@@ -1,3 +1,6 @@
 /nbproject
 .vagrant/
 /parameters.yml
+/plugins/*
+
+!/plugins/README.md
