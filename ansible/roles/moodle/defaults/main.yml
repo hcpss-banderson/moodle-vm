@@ -13,3 +13,4 @@ moodle_fullname:    "Moodle Virtual Machine"
 moodle_shortname:   "MoodleVM"
 moodle_summary:     "A virtual machine for developing Moodle."
 moodle_plugins:     []
+moodle_plugins_dev: []
