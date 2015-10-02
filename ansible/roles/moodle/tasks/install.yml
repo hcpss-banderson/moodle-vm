@@ -1,0 +1,59 @@
+---
+- name: Make sure the moodle install base is present
+  file: 
+    path: "{{ moodle_location }}"
+    state: directory
+    owner:  "{{ apache_user }}"
+    group:  "{{ apache_group }}"
+    mode:   0755
+
+- name: Make sure we have a moodle data directory
+  file:
+    path:   "{{ moodle_dataroot }}"
+    state:  directory
+    owner:  "{{ apache_user }}"
+    group:  "{{ apache_group }}"
+    mode:   0755
+  
+- name: Make sure we have a temporary download location
+  file: path=/tmp/moodle state=directory mode=0777
+  
+- name: Download moodle
+  command: moosh download-moodle -v {{ moodle_version }}
+  args:
+    chdir: /tmp/moodle
+    creates: /tmp/moodle/moodle-{{ moodle_version }}.tgz
+    
+- name: Unarchive moodle into a temporary directory
+  unarchive: 
+    src:        /tmp/moodle/moodle-{{ moodle_version }}.tgz
+    dest:       /tmp/moodle
+    copy:       no
+    creates:    /tmp/moodle/moodle/index.php
+    
+- name: Copy moodle files from the temp location to the installation directory
+  shell: cp -r /tmp/moodle/moodle/* {{ moodle_location }}
+  args:
+    creates: "{{ moodle_location }}/index.php"
+  
+- name: Install Moodle
+  sudo: yes
+  sudo_user: "{{ apache_user }}"
+  command: php admin/cli/install.php \
+    --lang=en \
+    --wwwroot={{ moodle_wwwroot }} \
+    --dataroot={{ moodle_dataroot }} \
+    --dbname={{ moodle_db_name }} \
+    --dbuser={{ moodle_db_username }} \
+    --dbpass={{ moodle_db_password }} \
+    --adminuser={{ moodle_adminuser }} \
+    --adminpass={{ moodle_adminpass }} \
+    --adminemail='{{ moodle_adminemail }}' \
+    --fullname='{{ moodle_fullname }}' \
+    --shortname={{ moodle_shortname }} \
+    --summary='{{ moodle_summary }}' \
+    --non-interactive \
+    --agree-license
+  args:
+    chdir: "{{ moodle_location }}"
+    creates: config.php

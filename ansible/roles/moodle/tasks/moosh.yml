@@ -1,0 +1,6 @@
+---
+- name: Add the moosh repository
+  apt_repository: repo='ppa:zabuch/ppa'
+  
+- name: Install moosh
+  apt: name=moosh

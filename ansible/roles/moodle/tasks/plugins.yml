@@ -1,0 +1,18 @@
+---
+- name: Refresh moosh's list of plugins
+  sudo: yes
+  sudo_user: "{{ apache_user }}"
+  command: moosh plugin-list
+  args:
+    chdir: "{{ moodle_location }}"
+  register: cache
+
+- name: Enable plugins
+  sudo: yes
+  sudo_user: "{{ apache_user }}"
+  command: moosh plugin-install {{ item }} {{ moodle_version }}
+  args:
+    chdir: "{{ moodle_location }}"
+    creates: "{{ item | regex_replace('_', '/') | regex_replace('block', 'blocks') }}/{{ item }}.php"
+  with_items: "{{ moodle_plugins }}"
+  register: plugins

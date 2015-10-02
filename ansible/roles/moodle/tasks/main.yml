@@ -1,107 +1,12 @@
 ---
-- name: Add the moosh repository
-  apt_repository: repo='ppa:zabuch/ppa'
-  
-- name: Install moosh
-  apt: name=moosh
+# Install Moosh
+- include: moosh.yml
 
-- name: Make sure the moodle install base is present
-  file: 
-    path: "{{ moodle_location }}"
-    state: directory
-    owner:  "{{ apache_user }}"
-    group:  "{{ apache_group }}"
-    mode:   0755
+# Install Moodle
+- include: install.yml
 
-- name: Make sure we have a moodle data directory
-  file:
-    path:   "{{ moodle_dataroot }}"
-    state:  directory
-    owner:  "{{ apache_user }}"
-    group:  "{{ apache_group }}"
-    mode:   0755
-  
-- name: Make sure we have a temporary download location
-  file: path=/tmp/moodle state=directory mode=0777
-  
-- name: Download moodle
-  command: moosh download-moodle -v {{ moodle_version }}
-  args:
-    chdir: /tmp/moodle
-    creates: /tmp/moodle/moodle-{{ moodle_version }}.tgz
-    
-- name: Unarchive moodle into a temporary directory
-  unarchive: 
-    src:        /tmp/moodle/moodle-{{ moodle_version }}.tgz
-    dest:       /tmp/moodle
-    copy:       no
-    creates:    /tmp/moodle/moodle/index.php
-    
-- name: Copy moodle files from the temp location to the installation directory
-  shell: cp -r /tmp/moodle/moodle/* {{ moodle_location }}
-  args:
-    creates: "{{ moodle_location }}/index.php"
-  
-- name: Install Moodle
-  sudo: yes
-  sudo_user: "{{ apache_user }}"
-  command: php admin/cli/install.php \
-    --lang=en \
-    --wwwroot={{ moodle_wwwroot }} \
-    --dataroot={{ moodle_dataroot }} \
-    --dbname={{ moodle_db_name }} \
-    --dbuser={{ moodle_db_username }} \
-    --dbpass={{ moodle_db_password }} \
-    --adminuser={{ moodle_adminuser }} \
-    --adminpass={{ moodle_adminpass }} \
-    --adminemail='{{ moodle_adminemail }}' \
-    --fullname='{{ moodle_fullname }}' \
-    --shortname={{ moodle_shortname }} \
-    --summary='{{ moodle_summary }}' \
-    --non-interactive \
-    --agree-license
-  args:
-    chdir: "{{ moodle_location }}"
-    creates: config.php
+# Install contributed plugins
+- include: plugins.yml
 
-- name: Refresh moosh's list of plugins
-  sudo: yes
-  sudo_user: "{{ apache_user }}"
-  command: moosh plugin-list
-  args:
-    chdir: "{{ moodle_location }}"
-  register: cache
-
-- name: Enable plugins
-  sudo: yes
-  sudo_user: "{{ apache_user }}"
-  command: moosh plugin-install {{ item }} {{ moodle_version }}
-  args:
-    chdir: "{{ moodle_location }}"
-    creates: "{{ item | regex_replace('_', '/') | regex_replace('block', 'blocks') }}/{{ item }}.php"
-  with_items: "{{ moodle_plugins }}"
-  register: plugins
-
-- name: Create custom plugin directories
-  file: 
-    path: "{{  
-      moodle_location ~ '/' ~ 
-      item.type | regex_replace('block', 'blocks') ~ 
-      item.location | regex_replace(item.location | dirname, '') 
-    }}"
-    state: directory
-  with_items: "{{ moodle_plugins_dev }}"
-  
-- name: Write rsync script to synchronize plugins
-  template: src=rsync_plugins.sh.j2 dest=~/rsync_plugins.sh
-  
-- name: Determine if the rsync script is running
-  shell: "ps ax | grep [r]sync_plugins"
-  register: rsync_running
-  failed_when: "'FAILED' in rsync_running.stdout"
-  
-- name: Run rsync script to synchronize plugins
-  shell: /bin/bash ~/rsync_plugins.sh &
-  async: 5
-  poll: 0
-  when: rsync_running.rc == 1
+# Copy dev plugins to Moodle
+- include: plugin_dev.yml

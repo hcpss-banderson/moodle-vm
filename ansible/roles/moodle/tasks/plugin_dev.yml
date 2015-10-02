@@ -1,0 +1,24 @@
+---
+- name: Create custom plugin directories
+  file: 
+    path: "{{  
+      moodle_location ~ '/' ~ 
+      item.type | regex_replace('block', 'blocks') ~ 
+      item.location | regex_replace(item.location | dirname, '') 
+    }}"
+    state: directory
+  with_items: "{{ moodle_plugins_dev }}"
+  
+- name: Write rsync script to synchronize plugins
+  template: src=rsync_plugins.sh.j2 dest=~/rsync_plugins.sh
+  
+- name: Determine if the rsync script is running
+  shell: "ps ax | grep [r]sync_plugins"
+  register: rsync_running
+  failed_when: "'FAILED' in rsync_running.stdout"
+  
+- name: Run rsync script to synchronize plugins
+  shell: /bin/bash ~/rsync_plugins.sh &
+  async: 5
+  poll: 0
+  when: rsync_running.rc == 1
