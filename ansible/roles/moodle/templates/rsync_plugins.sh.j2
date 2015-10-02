@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+while true
+do
+  {% for plugin in moodle_plugins_dev %}
+
+  {% set plugin_dir = 
+    moodle_location ~ "/" ~ 
+    plugin.type|regex_replace('block', 'blocks') ~ 
+    plugin.location|regex_replace(plugin.location | dirname, '')
+  %}
+
+  rsync -r --delete {{ plugin.location }}/ {{ plugin_dir }}/
+
+  sleep 1
+
+  {% endfor %}
+done
