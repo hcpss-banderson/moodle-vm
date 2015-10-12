@@ -48,10 +48,10 @@
     --dbpass={{ moodle_db_password }} \
     --adminuser={{ moodle_adminuser }} \
     --adminpass={{ moodle_adminpass }} \
-    --adminemail='{{ moodle_adminemail }}' \
+    {% if moodle_version > 2.8 %}--adminemail='{{ moodle_adminemail }}'{% endif %} \
     --fullname='{{ moodle_fullname }}' \
     --shortname={{ moodle_shortname }} \
-    --summary='{{ moodle_summary }}' \
+    {% if moodle_version > 2.8 %}--summary='{{ moodle_summary }}'{% endif %} \
     --non-interactive \
     --agree-license
   args:
