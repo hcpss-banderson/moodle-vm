@@ -2,5 +2,7 @@
 .vagrant/
 /parameters.yml
 /plugins/*
+/patches/*
 
 !/plugins/README.md
+!/patches/README.md
