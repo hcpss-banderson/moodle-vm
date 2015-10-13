@@ -1,18 +1,17 @@
 ---
-- name: Refresh moosh's list of plugins
-  sudo: yes
-  sudo_user: "{{ apache_user }}"
-  command: moosh plugin-list
-  args:
-    chdir: "{{ moodle_location }}"
-  register: cache
-
-- name: Enable plugins
-  sudo: yes
-  sudo_user: "{{ apache_user }}"
-  command: moosh plugin-install {{ item }} {{ moodle_version }}
-  args:
-    chdir: "{{ moodle_location }}"
-    creates: "{{ item | regex_replace('_', '/') | regex_replace('block', 'blocks') }}/{{ item }}.php"
+- name: Make sure we have a folder to download our plugins to
+  file: path=/tmp/moodle-plugins state=directory
+  
+- name: Download plugins
+  get_url:
+    url: "{{ item.url }}"
+    dest: /tmp/moodle-plugins/{{ item.name }}.zip
   with_items: "{{ moodle_plugins }}"
-  register: plugins
+  
+- name: Unzip plugin files
+  unarchive:
+    copy: no
+    src: /tmp/moodle-plugins/{{ item.name }}.zip
+    dest: "{{ moodle_location }}/{{ item.destination }}"
+    creates: "{{ moodle_location }}/{{ item.destination }}/lib.php"
+  with_items: "{{ moodle_plugins }}"
