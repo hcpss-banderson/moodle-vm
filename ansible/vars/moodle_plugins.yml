@@ -1,0 +1,73 @@
+---
+# If you want to get Moodle from git, specify the tag
+moodle_plugins:
+  # RSS Plus
+  - name: block_rss_plus
+    shortname: rss_plus
+    url: "https://moodle.org/plugins/download.php/8660/block_rss_plus_moodle28_2015060101.zip"
+    destination: blocks
+    
+  # Font Awesome
+  - name: filter_fontawesome
+    shortname: fontawesome
+    url: "https://moodle.org/plugins/download.php/7796/filter_fontawesome_moodle29_2015012500.zip"
+    destination: filter
+  
+  # AutoEnrol
+  - name: enrol_autoenrol
+    shortname: autoenrol
+    url: "https://moodle.org/plugins/download.php/7395/enrol_autoenrol_moodle28_2014113000.zip"
+    destination: enrol
+    
+  # SAML Authentication
+  - name: auth_saml
+    shortname: saml
+    url: "https://moodle.org/plugins/download.php/9041/auth_saml_moodle29_2015072901.zip"
+    destination: auth
+    
+  # Grid Format
+  - name: format_grid
+    shortname: grid
+    url: "https://moodle.org/plugins/download.php/8086/format_grid_moodle28_2015022500.zip"
+    destination: course/format
+    
+  # Essential Theme
+  - name: theme_essential
+    shortname: essential
+    url: "https://moodle.org/plugins/download.php/8347/theme_essential_moodle28_2015040900.zip"
+    destination: theme
+  
+  # Vision Theme
+  - name: theme_vision
+    shortname: vision
+    service: github
+    url: "https://github.com/HCPSS/moodle-theme_vision.git"
+    tag: v1.0.2
+    destination: theme
+
+  # Provisioner
+  - name: local_provisioner
+    shortname: provisioner
+    service: github
+    url: "https://github.com/HCPSS/moodle-local_provisioner.git"
+    tag: v1.4.3
+    destination: local
+    auth: "{{ github_access_token }}"
+  
+  # GuidSync
+  - name: local_guidsync
+    shortname: guidsync
+    service: github
+    url: "https://github.com/HCPSS/moodle-local_guidsync.git"
+    tag: v1.1
+    destination: local
+    auth: "{{ github_access_token }}"
+  
+  # HCPSS Library
+  - name: local_hcpss_lib
+    shortname: hcpss_lib
+    service: github
+    url: "https://github.com/HCPSS/moodle-local_hcpss_lib.git"
+    tag: v1.0.0
+    destination: local
+    auth: "{{ github_access_token }}"
