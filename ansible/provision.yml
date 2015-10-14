@@ -7,7 +7,6 @@
     - vars/apache.yml
     - vars/php.yml
     - vars/mysql.yml
-    - vars/moodle_plugins.yml
   
   roles:
     - geerlingguy.apache
@@ -21,5 +20,3 @@
         src:    "{{ moodle_location }}"
         dest:   "/var/www/moodle"
         state:  link
-  
-  
