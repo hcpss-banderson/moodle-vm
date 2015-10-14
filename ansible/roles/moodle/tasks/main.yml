@@ -1,4 +1,7 @@
 ---
+# Install prerequisites
+- include: prerequisites.yml
+
 # Install Moosh
 - include: moosh.yml
 
