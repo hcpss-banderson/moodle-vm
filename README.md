@@ -67,7 +67,7 @@ moodle_plugins:
 
   # An Example of a plugin hosted on a github private repo
   - name: local_mycoplugin
-    shortname: hcpss_lib
+    shortname: mycoplugin
     url: "https://github.com/VENDOR/REPO.git"
     destination: local
     service: github
