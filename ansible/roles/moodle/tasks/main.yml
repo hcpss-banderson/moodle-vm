@@ -13,3 +13,6 @@
 
 # Copy dev plugins to Moodle
 - include: plugin_dev.yml
+
+# Apply any patches
+- include: patch.yml
