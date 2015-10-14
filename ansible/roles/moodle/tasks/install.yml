@@ -1,4 +1,7 @@
 ---
+- name: Remove install base is it exists
+  file: path={{ moodle_location }} state=absent
+
 - name: Make sure the moodle install base is present
   file: 
     path: "{{ moodle_location }}"
@@ -15,26 +18,20 @@
     group:  "{{ apache_group }}"
     mode:   0755
   
-- name: Make sure we have a temporary download location
-  file: path=/tmp/moodle state=directory mode=0777
+- name: Clone the moodle git repo
+  git:
+    repo: https://github.com/moodle/moodle.git
+    dest: "{{ moodle_location }}"
+    version: "{{ moodle_tag }}"
+    
+- name: Remove git folder
+  file: path="{{ moodle_location }}/.git" state=absent
   
-- name: Download moodle
-  command: moosh download-moodle -v {{ moodle_version }}
-  args:
-    chdir: /tmp/moodle
-    creates: /tmp/moodle/moodle-{{ moodle_version }}.tgz
-    
-- name: Unarchive moodle into a temporary directory
-  unarchive: 
-    src:        /tmp/moodle/moodle-{{ moodle_version }}.tgz
-    dest:       /tmp/moodle
-    copy:       no
-    creates:    /tmp/moodle/moodle/index.php
-    
-- name: Copy moodle files from the temp location to the installation directory
-  shell: cp -r /tmp/moodle/moodle/* {{ moodle_location }}
-  args:
-    creates: "{{ moodle_location }}/index.php"
+- name: Remove the moodle database if it exists
+  mysql_db: name={{ moodle_db_name }} state=absent
+  
+- name: Create the moodle database
+  mysql_db: name={{ moodle_db_name }} state=present
   
 - name: Install Moodle
   sudo: yes
