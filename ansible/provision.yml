@@ -12,7 +12,7 @@
     - geerlingguy.apache
     - geerlingguy.php
     - geerlingguy.mysql
-    - moodle
+    - hcpss.moodle
     
   tasks:
     - name: Make Moodle accessible over the web
