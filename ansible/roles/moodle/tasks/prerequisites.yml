@@ -1,6 +1,0 @@
----
-- name: Install prerequisites
-  apt: name={{ item }}
-  with_items:
-    - git
-    - unzip

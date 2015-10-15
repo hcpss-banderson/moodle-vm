@@ -1,0 +1,9 @@
+---
+- src: geerlingguy.apache
+
+- src: geerlingguy.php
+
+- src: geerlingguy.mysql
+
+- src: https://github.com/hcpss-banderson/ansible-role-moodle
+  name: hcpss.moodle

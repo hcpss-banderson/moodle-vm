@@ -1,3 +1,0 @@
-geerlingguy.apache
-geerlingguy.php
-geerlingguy.mysql
