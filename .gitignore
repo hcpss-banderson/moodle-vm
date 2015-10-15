@@ -3,6 +3,9 @@
 /parameters.yml
 /plugins/*
 /patches/*
+/database/*
+/ansible/roles/*
 
 !/plugins/README.md
 !/patches/README.md
+!/database/README.md
