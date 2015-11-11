@@ -45,6 +45,17 @@ moodle_db_import:   "/vagrant/database/seed.sql"
 # If you want to get Moodle from git, specify the tag
 moodle_tag:         v2.8.5
 
+# Local moodle plugins
+moodle_plugins_dev:
+  # Type of plugin (example "block", "auth", "enrol", etc)
+  - type: enrol
+
+    # Location of the plugin relative to ansible 
+    location: ../plugins/enrol_ldap_group
+
+  - type: block
+    location: ../plugins/block_someblock  
+
 # Moodle plugins from moodle.org or github
 moodle_plugins:
   # This is an example of a plugin from moodle.org
@@ -77,10 +88,10 @@ moodle_plugins:
     auth: "{{ github_access_token }}"
     
 # Patches to apply to the Moodle installation. The "patches" folder is supplied
-# and ignored by .gitignore as a convenient place to put the patch files. But
-# they can be put anywhere
+# and ignored by .gitignore as a convenient place to put the patch files. The
+# Path is relative to the ansible directory.
 moodle_patches:
-  - src: /vagrant/patches/mod_forum_lib.php.patch
+  - src: ../patches/mod_forum_lib.php.patch
     dest: "{{ moodle_location }}/mod/forum/lib.php"
 
 # Apache
